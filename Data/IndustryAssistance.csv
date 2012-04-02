@@ -1,0 +1,33 @@
+Leakage Risk Classification, NAICS Sector Definition, NAICS Code, Activities, AF2013, AF2015, AF2018
+High,Crude Petroleum and Natural Gas Extraction,211111,Thermal EOR Crude Oil Extraction; Non-Thermal Crude Oil Extraction,100%,100%,100%
+High,Natural Gas Liquid Extraction,211112,Natural Gas Liquid Processing,100%,100%,100%
+High,"Potash, Soda, and Borate Mineral Mining",212391,Mining and Manufacturing of Soda Ash and Related Products,100%,100%,100%
+High,All Other Nonmetallic Mineral Mining,212399,Diatomaceous Earth Mining,100%,100%,100%
+High,Paper (except Newsprint) Mills,322121,Tissue Manufacturing,100%,100%,100%
+High,Paperboard Mills,322130,Recycled Boxboard Manufacturing; Recycled Linerboard (Testliner) Manufacturing; Recycled Medium (Fluting) Manufacturing,100%,100%,100%
+High,All Other Petroleum and Coal Products Manufacturing,324199,Coke Calcining,100%,100%,100%
+High,All Other Basic Inorganic Chemical Manufacturing,325188,All Other Basic Inorganic Chemical Manufacturing,100%,100%,100%
+High,All Other Basic Organic Chemical Manufacturing,325199,All Other Basic Organic Chemical Manufacturing,100%,100%,100%
+High,Nitrogenous Fertilizer Manufacturing,325311,Nitric Acid Production; Calcium Ammonium Nitrate,100%,100%,100%
+High,Flat Glass Manufacturing,327211,Flat Glass Manufacturing,100%,100%,100%
+High,Glass Container Manufacturing,327213,Container Glass Manufacturing,100%,100%,100%
+High,Cement Manufacturing,327310,Cement Manufacturing,100%,100%,100%
+High,Lime Manufacturing,327410,Dolime Manufacturing,100%,100%,100%
+High,Iron and Steel Mills,331111,Steel Production Using Electric Arc Furnace,100%,100%,100%
+High,Rolled Steel Shape Manufacturing,331221,Hot Rolled Steel Sheet Production,100%,100%,100%
+Medium,Food Manufacturing,311,Food Manufacturing,100%,75%,50%
+Medium,Cut and Sew Apparel Manufacturing,3152,Cut and Sew Apparel Manufacturing,100%,75%,50%
+Medium,Breweries,312120,Brewing,100%,75%,50%
+Medium,Petroleum Refineries,324110,Petroleum Refining,100%,75%,50%
+Medium,Industrial Gas Manufacturing,325120,Gaseous Hydrogen Production; Liquefied Hydrogen Production,100%,75%,50%
+Medium,Biological Product (Except Diagnostic) Manufacturing,325414,Biological Product (Except Diagnostic) Manufacturing,100%,75%,50%
+Medium,Gypsum Product Manufacturing,327420,Plaster Manufacturing; Plaster Board Manufacturing,100%,75%,50%
+Medium,Mineral Wool Manufacturing,327993,Fiber Glass Manufacturing,100%,75%,50%
+Medium,Rolled Steel Shape Manufacturing,331221,Picked Steel Sheet Production; Cold Rolled and Annealed Steel Sheet Production; Galvanized Steel Sheet Production,100%,75%,50%
+Medium,Secondary Smelting and Alloying of Aluminum,331314,Secondary Smelting and Alloying of Aluminum,100%,75%,50%
+Medium,"Secondary Smelting, Refining, and Alloying of Nonferrous Metal (Except Copper and Aluminum)",331492,"Secondary Smelting, Refining, and Alloying of Nonferrous Metal (Except Copper and Aluminum)",100%,75%,50%
+Medium,Iron Foundries,331511,Iron Foundries,100%,75%,50%
+Medium,Turbine and Turbine Generator Set Units Manufacturing,333611,Testing of Turbines and Turbine Generator Sets,100%,75%,50%
+Low,Pharmaceutical and Medicine Manufacturing,325412,Pharmaceutical and Medicine Manufacturing,100%,50%,30%
+Low,Aircraft Manufacturing,336411,Aircraft Manufacturing,100%,50%,30%
+Low,Support Activities for Air Transportation,4881,Support Activities for Air Transportation,100%,50%,30%,
