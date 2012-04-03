@@ -69,3 +69,16 @@ p <- allowance_gg + geom_bar(dat=dat, aes(fill=Allowance.Type), alpha=2/3) + sca
 p + geom_line(dat=dat[1:2,], aes(x=as.numeric(Year), y=BAU_MMT), colour="red") + geom_line(dat=dat[3:8,], aes(x=as.numeric(Year), y=BAU_MMT), colour="red") + ylab(expression(paste(MMTCO[2], plain(e)))) + annotate("text", x=6.5, y=420, label="Business as Usual Emissions", size=4, col="red")
 
 ggsave("Figures/Offsets and BAU.jpg", width=7, height=5, units="in")
+
+
+# PLOT OFFSETS VS REDUCTION NEEDED
+# -----------------
+dat <- data.frame(MMTCO2e=c(max_offsets, reductions_needed),
+                  Allowance.Type=c(rep(times=length(max_offsets), "Max.Offsets"),
+                                   rep(times=length(reductions_needed), "Reductions.Needed")),
+                  Year=as.factor(c(names(max_offsets), names(reductions_needed))))
+
+reduction_gg <- ggplot(dat, aes(x=Year, y=MMTCO2e))
+reduction_gg + geom_bar(dat=dat, aes(fill=Allowance.Type), alpha=2/3, position="dodge") +scale_fill_manual(values=c("light blue", "red")) + ylab(expression(paste(MMTCO[2], plain(e))))
+
+ggsave("Figures/Offsets vs Reductions.jpg")
