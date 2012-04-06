@@ -158,8 +158,25 @@ dat <- data.frame(Allowance.Amount=c(
                        ),
                   Year=rep(times=7, rownames(allowance_alloc.tbl))
                   )
+# or use reshape
+library(reshape)
+dat <- melt(subset(allowance_alloc.tbl, select=c(-Total.Allowances, -Utilities)))
+colnames(dat) = c("Year", "Allowance.Type", "Allowance.Amount")
 
 allowance_gg <- ggplot(dat, aes(x=Allowance.Type, y=Allowance.Amount, fill=Allowance.Type))
-allowance_gg + geom_bar() + facet_wrap(~ Year) + opts(axis.text.x=theme_blank(), axis.title.x=theme_blank())
+allowance_gg + geom_bar() + facet_wrap(~ Year) + ylab(expression(paste("Number of Allowances (", MMTCO[2], plain(e), ")"))) + 
+     opts(axis.text.x=theme_blank(), axis.title.x=theme_blank(), theme_text(size=14), title="Allowance Categories with Industry Estimate")
 
-ggsave("Figures/Total Allowance Allocation with Industry Estimate.jpg")
+ggsave("Figures/Total Allowance Allocation with Industry Estimate.jpg", height=5, width=7, units="in")
+
+
+# INDUSTRY ALLOCATION
+dat <- data.frame(Year=rownames(allowance_alloc.tbl), Industry=allowance_alloc.tbl[, "Industry"])
+
+industry_gg <- ggplot(dat, aes(as.factor(Year), Industry))
+industry_gg + geom_bar(alpha=3/4, fill="dark blue") + labs(x="Industry Allowances", y=expression(paste("Number of Allowances (", MMTCO[2], plain(e), ")"))) +
+     opts(theme_text(size=14), title="Estimated Industry Allowances")
+
+ggsave("Figures/Industry Allowances.jpg", height=5, width=7, units="in")
+
+
