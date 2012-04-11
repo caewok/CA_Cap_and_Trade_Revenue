@@ -160,7 +160,8 @@ dat <- data.frame(Allowance.Amount=c(
                   )
 # or use reshape
 library(reshape)
-dat <- melt(subset(allowance_alloc.tbl, select=c(-Total.Allowances, -Utilities)))
+colnames(allowance_alloc.tbl)[2] <- "Reserve"
+dat <- melt(subset(allowance_alloc.tbl, select=c(-Total.Allowances, -Utilities, -Industry.Plus.Remainder)))
 colnames(dat) = c("Year", "Allowance.Type", "Allowance.Amount")
 
 allowance_gg <- ggplot(dat, aes(x=Allowance.Type, y=Allowance.Amount, fill=Allowance.Type))
@@ -180,3 +181,117 @@ industry_gg + geom_bar(alpha=3/4, fill="dark blue") + labs(x="Industry Allowance
 ggsave("Figures/Industry Allowances.jpg", height=5, width=7, units="in")
 
 
+# POTENTIAL ALLOWANCES FOR AUCTION WITH INDUSTRY ESTIMATE
+# -----------------
+source("R Code/IndustryAssistanceEstimate.R")
+library(reshape)
+dat <- allowance_alloc.tbl
+colnames(dat)[3] <- "Advance"
+colnames(dat)[6] <- "Industry +\nRemainder"
+
+# shift advance allowances to auction year
+dat <- rbind(dat[1,], dat)
+rownames(dat) <- 2012:2020
+dat["2012",] <- 0
+dat[,"Advance"] <- c(dat[as.character(2015:2020), "Advance"], 0 ,0, 0)
+     
+dat <- melt(subset(dat, select=c(3, 6, 5)))
+colnames(dat) <- c("Auction.Year", "Allowance.Type", "Allowance.Amount")
+
+# add lines for remainder/industry split, IOU/POU split
+dat <- cbind(dat, hline=c(rep(times=9, NA), NA, allowance_alloc.tbl[,"Remainder"], NA, allowance_alloc.tbl[,"IOU"]),
+             ymax=c(rep(times=9, NA), NA, allowance_alloc.tbl[,"Industry.Plus.Remainder"], NA, allowance_alloc.tbl[,"Utilities"]))
+
+auction_gg <- ggplot(dat, aes(Allowance.Type, weight=Allowance.Amount, fill=Allowance.Type))
+p <- auction_gg + geom_bar(alpha=3/4) + facet_wrap(~ Auction.Year) + labs(y="Number of Allowances (MMT CO2e)") + 
+     opts(axis.text.x=theme_blank(), axis.title.x=theme_blank(), theme_text(size=14), 
+          title="Potential Allowances for CA Cap-and-Trade Auction")
+
+p + geom_errorbar(aes(y=hline, ymax=ymax, ymin=hline), col="red", linetype="dashed") + xlab("Red dashed areas represent estimated Industry\nand POU allowances, respectively.") +opts(axis.title.x=theme_text(face="italic"))
+
+ggsave("Figures/Auction Allowances with Industry.jpg", height=5, width=7, units="in")
+
+
+
+# AUCTION REVENUE 2012-2013 WITH INDUSTRY ESTIMATE
+# -----------------
+# break down by specific auction and revenue type: advance, remainder, Utility (IOU)
+# display spread between $10 and $20
+# Auctions: Nov 2012, Feb 2013, May 2013, August 2013, November 2013
+LOW_PRICE <- 10
+MID_PRICE <- 15
+HIGH_PRICE <- 20
+
+dat <- matrix(0, nrow=5, ncol=3, dimnames=list(c("2012-11-01", "2013-02-01", "2013-05-01", "2013-08-01", "2013-11-01"), c("Advance", "Remainder", "Utility (IOU)")))
+dat[,"Advance"] <- c(allowance_alloc.tbl["2015", "Advance.Auction"], rep(times=4, allowance_alloc.tbl["2016", "Advance.Auction"] / 4))
+dat[,"Remainder"] <- c(NA, rep(times=4, allowance_alloc.tbl["2013", "Remainder"] / 4))
+dat[,"Utility (IOU)"] <- c(NA, rep(times=4, allowance_alloc.tbl["2013", "IOU"] / 4))
+dat <- rbind(dat, 'Total 2012-13'=c(sum(dat[,"Advance"]), colSums(na.omit(dat[,c("Advance", "Utility (IOU)")]))))
+
+revenue_low <- melt(dat * LOW_PRICE)
+revenue_mid <- melt(dat * MID_PRICE)
+revenue_high <- melt(dat * HIGH_PRICE)
+
+revenue <- cbind(revenue_low, revenue_mid$value, revenue_high$value)
+colnames(revenue) <- c("Auction", "Allowance.Type", "LOW", "MID", "HIGH")
+
+# FY 2012-13 revenue
+auction_index <- revenue$Auction %in% c("2012-11-01", "2013-02-01", "2013-05-01")
+colSums(revenue[auction_index,])
+
+#revenue$Auction <- as.Date(as.character(revenue$Auction), format="%Y-%m-%d")
+auction_labeller <- function(var, value) {
+     value <- as.character(value)
+     if(var == "Auction") {
+          d <- as.Date(value)
+          value[!is.na(d)] <- strftime(na.omit(d), format="%b %Y")
+     }
+     return(value)
+}
+
+
+floor_gg2 <- ggplot(revenue, aes(Allowance.Type, MID, ymin=LOW, ymax=HIGH, group=Allowance.Type, colour=Allowance.Type))
+p <- floor_gg2 + geom_pointrange(size=1) + labs(y="Millions of $") + facet_grid(~ Auction, labeller=auction_labeller) +
+     opts(axis.text.x=theme_blank(), axis.title.x=theme_text(face="italic"), theme_text(size=14),  
+          title="Potential California GHG Auction Revenue 2012-13") +
+          xlab("Price range of $10-$20 per allowance. \nThe dot represents $15 / allowance.") 
+
+p
+
+# Save the original definition of the guide_grid
+guide_grid_orig <- ggplot2:::guide_grid
+
+# Create the replacement function
+guide_grid_no_vline <- function(theme, x.minor, x.major, y.minor, y.major) {  
+     x.minor <- setdiff(x.minor, x.major)
+     y.minor <- setdiff(y.minor, y.major)
+     
+     ggname("grill", grobTree(
+          theme_render(theme, "panel.background"),
+          if(length(y.minor) > 0) theme_render(
+               theme, "panel.grid.minor", name = "y",
+               x = rep(0:1, length(y.minor)), y = rep(y.minor, each=2), 
+               id.lengths = rep(2, length(y.minor))
+               ),
+          if(length(y.major) > 0) theme_render(
+               theme, "panel.grid.major", name = "y",
+               x = rep(0:1, length(y.major)), y = rep(y.major, each=2), 
+               id.lengths = rep(2, length(y.major))
+               )
+          ))
+}
+# Set the environment to be the same as original
+environment(guide_grid_no_vline) <- environment(ggplot2:::guide_grid)
+
+# Assign the function inside ggplot2
+assignInNamespace("guide_grid", guide_grid_no_vline, ns="ggplot2")
+
+# Draw the graph
+p
+
+ggsave("Figures/Auction Revenue 2012-13.jpg", height=5, width=8, units="in")
+
+
+
+# Restore the original guide_grid function so that it will draw all gridlines again
+assignInNamespace("guide_grid", guide_grid_orig, ns="ggplot2")

@@ -82,3 +82,5 @@ reduction_gg <- ggplot(dat, aes(x=Year, y=MMTCO2e))
 reduction_gg + geom_bar(dat=dat, aes(fill=Allowance.Type), alpha=2/3, position="dodge") +scale_fill_manual(values=c("light blue", "red")) + ylab(expression(paste(MMTCO[2], plain(e))))
 
 ggsave("Figures/Offsets vs Reductions.jpg")
+
+
